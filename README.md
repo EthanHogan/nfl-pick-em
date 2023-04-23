@@ -26,3 +26,14 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+
+## Technologies being used for this specific app (Chirp)
+- [Next.js (React Framework)](https://nextjs.org)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Prisma (ORM)](https://prisma.io)
+- [tRPC (TS based framework building typesafe APIs)](https://trpc.io)
+- [Clerk (Auth/User Management)](https://clerk.com)
+- [Vercel (CI/CD for Serverless Apps)](https://create.t3.gg/en/deployment/vercel)
+- [PlanetScale (Serverless MySQL DB)](https://planetscale.com)
+- [Axiom (Logging)](https://app.axiom.co)
