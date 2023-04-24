@@ -66,3 +66,6 @@ npx prisma studio
 
 ## Deployment
 Deployment should be as easy as pushing changes to `main` or `master` branch if Vercel and PlanetScale are setup correctly.
+```sh
+git push
+```
