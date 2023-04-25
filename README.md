@@ -1,4 +1,4 @@
-## Technologies used in the Chirp app
+## Technologies used in the UserPlatform
 - [Next.js (React Framework)](https://nextjs.org)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Prisma (ORM)](https://prisma.io)
@@ -19,7 +19,7 @@ npm install
     1. Sign in to PlanetScale at https://planetscale.com.
     2. Click "Create a New Database."
     3. Select the region for your DB, ideally close to where your Vercel functions will be deployed.
-    4. Name your DB (e.g., "chirpdb").
+    4. Name your DB (e.g., "userplatformdb").
     5. Click the "Connect" button.
     6. Change the "Connect with" value to "Prisma."
     7. Copy the "DATABASE_URL" environment variable and paste it into your project's `.env` file.
@@ -28,7 +28,7 @@ npm install
 - **Clerk:**
     1. Navigate to https://dashboard.clerk.com and sign in.
     2. Add an application (you may need to create a workspace first, e.g., "Personal").
-    3. Set the application name (e.g., "chirp").
+    3. Set the application name (e.g., "userplatform").
     4. Select Identifiers, Auth strategy, and Social Connections as desired.
     5. Click "Create Application."
     6. Navigate to "API Keys" on Clerk to get the "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" and "CLERK_SECRET_KEY". Copy and paste both into your project's `.env` file.
