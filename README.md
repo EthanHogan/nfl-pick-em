@@ -51,10 +51,22 @@ npm install
   4. Select Identifiers, Auth strategy, and Social Connections as desired.
   5. Click `Create Application`.
   6. Navigate to `API Keys` on Clerk to get the `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`. Copy and paste both into your project's `.env` file.
+- **Upstash:**
+  1. Navigate to [Upstash](https://upstash.com) and sign in.
+  2. Click `Console` button to get the console or go to console [here](https://console.upstash.com).
+  3. Click `Create Database`.
+  4. Name the database (e.g., "userplatform-ratelimiter")
+  5. Select type `Regional`.
+  6. Select the Region closest to your DB and server (e.g., "US-EAST-1").
+  7. Click `Create`.
+  8. Once done creating, on the `Details` tab (should be the default tab), scroll down under the `REST API` section, you should see options to access your Upstash database (cURL, JavaScript (Fetch), @upstash/redis, .env).
+  9. Select `.env`
+  10. Copy both the `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+  11. Paste both of the environment variables into your `.env`.
 - **Vercel:**
   1. Create a new project in `Vercel` at https://vercel.com/new.
   2. Import your project from GitHub by finding it in the list and clicking "import."
-  3. Add the `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CLERK_SECRET_KEY` environment variables from your `.env` file to the `Environment Variables` section.
+  3. Add the `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` environment variables from your `.env` file to the `Environment Variables` section.
   4. Select `Production`, `Preview`, and `Development` environments (you can do this later after deployment at https://vercel.com/MyGitHubUsername/MyProjectName/settings/environment-variables if needed).
   5. Click `Deploy`.
   6. Set the function region to the region closest to your DB deployment at https://vercel.com/MyGitHubUsername/MyProjectName/settings/functions.
