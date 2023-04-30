@@ -16,8 +16,9 @@ https://github.com/EthanHogan/UserPlatform.git
 - [tRPC (TS-based framework for building typesafe APIs)](https://trpc.io)
 - [PlanetScale (Serverless MySQL DB)](https://planetscale.com)
 - [Clerk (Auth/User Management)](https://clerk.com)
-- [Vercel (CI/CD for Serverless Apps)](https://create.t3.gg/en/deployment/vercel)
+- [Vercel (CI/CD, Hosting for Serverless Apps)](https://create.t3.gg/en/deployment/vercel)
 - [Axiom (Logging)](https://app.axiom.co)
+- [Upstash (Rate Limiter)](https://upstash.com)
 
 ## Steps to setting up new project
 - Run: 
