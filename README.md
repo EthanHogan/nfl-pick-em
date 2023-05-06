@@ -105,3 +105,36 @@ Deployment should be as easy as pushing changes to `main` or `master` branch if 
 ```sh
 git push
 ```
+
+## Using Clerk Webhooks to sync user data
+
+- **Ngrok:**
+  You will need Ngrok to locally test your webhook endpoints and their ability to receive/handle webhook requests.
+  (Clerk Webhook Integrations w/ Ngrok for testing locally)[https://ngrok.com/docs/integrations/clerk/webhooks/]
+
+  1. Open ngrok terminal by running the .exe once you have ngrok for windows installed.
+  2. Run ngrok on the same port you have your project running on.
+
+  ```sh
+  ngrok http 3000
+  ```
+
+  3. Copy the "Forwarding" url from the terminal to setup an endpoint with Clerk (e.g. https://1234-56-789-012-345.ngrok-free.app
+
+- **Clerk:**
+
+  1. Navigate to https://dashboard.clerk.com and sign in.
+  2. Select your application.
+  3. Select "Webhooks".
+  4. Select "Add Endpoint".
+  5. Paste the "Forwarding" url from the ngrok terminal in the "Endpoint URL" field.
+  6. Append your route of your webhook to the end of the "Endpoint URL" (e.g. /api/clerk-user-webhook)
+  7. Select which events you would like handle in your webhook endpoint (e.g. "user.created", "user.deleted", and "user.updated").
+  8. Select "Create".
+  9. Copy the "Signing Secret" in the bottom right of the "Endpoints" tab.
+  10. Paste this secret as the value for your "CLERK_USER_EVENT_WEBHOOK_SECRET" environment variable in you `.env` file.
+
+  - Note: This environment variable is endpoint specific. So for your production endpoint, you will have a different "Signing Secret" that will need to be added to your environment variables in Vercel Settings (example url of how to get there: https://vercel.com/MyGitHubUsername/MyProjectName/settings/environment-variables).
+
+  11. Select "Testing" tab of your Clerk endpoint, then select a supported event type to test your webhook. Click "Send Example" to test your webhook event handler.
+  12. Create a new endpoint in Clerk ("Add Endpoint" on "Webhooks" page) with the same settings, except change the endpoint url to your production endpoint.
