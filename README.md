@@ -138,3 +138,24 @@ git push
 
   11. Select "Testing" tab of your Clerk endpoint, then select a supported event type to test your webhook. Click "Send Example" to test your webhook event handler.
   12. Create a new endpoint in Clerk ("Add Endpoint" on "Webhooks" page) with the same settings, except change the endpoint url to your production endpoint.
+
+## Running MySQL DB locally using Docker
+- **Docker:**
+  1. Spin up a container with an image that has mysql on it. If you run the command below, it will automatically install the latest version of the mysql image and startup a container.
+   - Swap the `user-platform-mysql` for whatever you want to call the container.
+   - Swap the `3333` for whatever port number you want to expose the container on.
+   - Swap `myPassword` with your password to the db.
+   ```sh
+   docker run --name user-platform-mysql -p 3333:3306 -e MYSQL_ROOT_PASSWORD=myPassword -d mysql
+   ```
+- **MySQL:**
+  1. Use MySQL Workbench to create your database schema. Note the name. For this example, lets say we name the schema `UserPlatform`.
+- **Prisma:**
+  1. Update the `DATABASE_URL` line in the `.env` to the following format:
+   - `root` and `myPassword` are your DB credentials. You would have used them to connect to the DB in MySQL Workbench.
+   - Make sure the port number (`3333` in this example) matches the port number you exposed the Docker container on.
+   - The last thing after the slash is the name of the DB schema to connect to. `UserPlatform`, in this example.
+  ```sh
+   DATABASE_URL='mysql://root:myPassword@localhost:3333/UserPlatform'
+  ```
+
