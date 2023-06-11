@@ -22,5 +22,6 @@ model User {
   firstName String
   lastName  String
   username  String   @unique
+  profileImageUrl String
   createdAt DateTime @default(now())
 }
