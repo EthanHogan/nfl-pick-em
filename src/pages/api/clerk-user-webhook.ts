@@ -76,6 +76,7 @@ async function handleUserCreated(event: UserWebhookEvent) {
       firstName: data.first_name,
       lastName: data.last_name,
       username: data.username,
+      profileImageUrl: data.profile_image_url,
     },
   });
 }
@@ -95,6 +96,7 @@ async function handleUserUpdated(event: UserWebhookEvent) {
       firstName: data.first_name,
       lastName: data.last_name,
       username: data.username,
+      profileImageUrl: data.profile_image_url,
     },
   });
 }
@@ -114,11 +116,10 @@ async function handleUserDeleted(event: UserWebhookEvent) {
 }
 
 async function userExists(id: User["id"]) {
-  return (
-    (await prisma.user.findUnique({
-      where: {
-        id,
-      },
-    })) !== null
-  );
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return !!user;
 }
