@@ -9,7 +9,7 @@ import { LoadingSpinner } from "~/components/loading";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({
+  const hello = api.message.hello.useQuery({
     text: "and Welcome to the User Platform!",
   });
   const user = useUser();
@@ -33,7 +33,7 @@ const Home: NextPage = () => {
           )}
         </div>
         <div className="mb-10">
-          {user.isSignedIn && <CreateExampleMessageWizard />}
+          {user.isSignedIn && <CreateMessageWizard />}
         </div>
         <div>{user.isSignedIn && <Messages />}</div>
         <button className="mt-10 rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
 };
 
 const Messages = () => {
-  const { data: messages } = api.example.getRecentRecords.useQuery({ n: 5 });
+  const { data: messages } = api.message.getRecentRecords.useQuery({ n: 5 });
 
   return (
     <div className="flex flex-col gap-3 text-white">
@@ -66,17 +66,17 @@ const Messages = () => {
   );
 };
 
-const CreateExampleMessageWizard = () => {
+const CreateMessageWizard = () => {
   const { user } = useUser();
 
   const [input, setInput] = useState("");
 
   const ctx = api.useContext();
 
-  const { mutate, isLoading: isPosting } = api.example.create.useMutation({
+  const { mutate, isLoading: isPosting } = api.message.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.example.getRecentRecords.invalidate();
+      void ctx.message.getRecentRecords.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;

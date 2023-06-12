@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { example } from "drizzle/schema";
+import { message } from "drizzle/schema";
 import { desc, eq } from "drizzle-orm";
 
 // import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
@@ -26,7 +26,7 @@ import { desc, eq } from "drizzle-orm";
 //   prefix: "@upstash/ratelimit",
 // });
 
-export const exampleRouter = createTRPCRouter({
+export const messageRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {
@@ -37,12 +37,15 @@ export const exampleRouter = createTRPCRouter({
   helloPrivateAndRateLimitedExample: privateProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {
+      // const { success } = await createExampleRateLimit.limit(ctx.userId);
+
+      // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       return {
         greeting: `Hello ${input.text}`,
       };
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.dbPool.select().from(example);
+    const data = await ctx.dbPool.select().from(message);
     return data;
   }),
   getRecentRecords: publicProcedure
@@ -50,8 +53,8 @@ export const exampleRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const data = await ctx.dbPool
         .select()
-        .from(example)
-        .orderBy(desc(example.createdAt))
+        .from(message)
+        .orderBy(desc(message.createdAt))
         .limit(input.n);
       return data;
     }),
@@ -69,15 +72,15 @@ export const exampleRouter = createTRPCRouter({
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const insertResult = await ctx.dbPool
-        .insert(example)
+        .insert(message)
         .values({ message: input.content, userId: userId });
 
-      const newExampleId = insertResult[0].insertId;
+      const newMessageId = insertResult[0].insertId;
 
-      const newExample = await ctx.db.query.example.findFirst({
-        where: eq(example.id, newExampleId),
+      const newMessage = await ctx.db.query.message.findFirst({
+        where: eq(message.id, newMessageId),
       });
 
-      return newExample;
+      return newMessage;
     }),
 });
