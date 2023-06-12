@@ -36,10 +36,10 @@ const Home: NextPage = () => {
           {user.isSignedIn && <CreateMessageWizard />}
         </div>
         <div>{user.isSignedIn && <Messages />}</div>
-        <button className="mt-10 rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
+        <div className="mt-10 cursor-pointer rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
           {!user.isSignedIn && <SignInButton />}
           {user.isSignedIn && <SignOutButton />}
-        </button>
+        </div>
         <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
       </main>
     </>
