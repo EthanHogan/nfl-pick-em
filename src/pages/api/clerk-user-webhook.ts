@@ -5,8 +5,9 @@ import { Webhook } from "svix";
 import { buffer } from "micro";
 import { db, dbPool } from "drizzle/index";
 import { TRPCError } from "@trpc/server";
-import { user } from "drizzle/schema";
+import { user, message } from "drizzle/schema";
 import { type InferModel, eq } from "drizzle-orm";
+import { convertToSQLTimeFormat } from "~/utils/api";
 
 export const config = {
   api: {
@@ -71,9 +72,9 @@ async function handleUserCreated(event: UserWebhookEvent) {
   const canCreateUser = !(await userExists(data.id));
   if (!canCreateUser) throw new TRPCError({ code: "CONFLICT" });
 
-  const result = await dbPool.insert(user).values({
+  await dbPool.insert(user).values({
     id: data.id,
-    createdAt: new Date(data.created_at),
+    createdAt: convertToSQLTimeFormat(new Date(data.created_at)),
     firstName: data.first_name,
     lastName: data.last_name,
     username: data.username,
@@ -112,7 +113,7 @@ async function handleUserDeleted(event: UserWebhookEvent) {
 
   const canDelete = await userExists(data.id);
   if (!canDelete) throw new TRPCError({ code: "NOT_FOUND" });
-
+  await dbPool.delete(message).where(eq(message.userId, data.id));
   await dbPool.delete(user).where(eq(user.id, data.id));
 }
 
