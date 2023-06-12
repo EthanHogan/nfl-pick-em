@@ -6,6 +6,10 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  webpack(config) {
+    config.experiments = { ...config.experiments, topLevelAwait: true };
+    return config;
+  },
   reactStrictMode: true,
   images: {
     domains: ["images.clerk.dev"],
