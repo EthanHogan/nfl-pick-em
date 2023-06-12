@@ -16,7 +16,7 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-import { prisma } from "~/server/db";
+import { db, dbPool } from "drizzle/index";
 
 // type CreateContextOptions = Record<string, never>;
 
@@ -32,7 +32,7 @@ import { prisma } from "~/server/db";
  */
 // const createInnerTRPCContext = (_opts: CreateContextOptions) => {
 //   return {
-//     prisma,
+//     db,
 //   };
 // };
 
@@ -49,7 +49,8 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const userId = sesh.userId;
 
   return {
-    prisma,
+    db,
+    dbPool,
     userId,
   };
 };
