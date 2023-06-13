@@ -1,4 +1,10 @@
-import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import {
+  SignIn,
+  SignInButton,
+  SignOutButton,
+  useClerk,
+  useUser,
+} from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -25,20 +31,28 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div>
-          {user.isSignedIn && (
-            <div className="mb-10 text-4xl font-extrabold text-white">
-              {hello.data?.greeting}
-            </div>
-          )}
+        <div className="mb-10 text-4xl font-extrabold text-white">
+          {hello.data?.greeting}
         </div>
         <div className="mb-10">
-          {user.isSignedIn && <CreateMessageWizard />}
+          <CreateMessageWizard />
         </div>
-        <div>{user.isSignedIn && <Messages />}</div>
-        <div className="mt-10 cursor-pointer rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
-          {!user.isSignedIn && <SignInButton />}
-          {user.isSignedIn && <SignOutButton />}
+        <Messages />
+        <div>
+          {!user.isSignedIn && (
+            <SignInButton mode="modal">
+              <button className="mt-10 cursor-pointer rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
+                Sign In
+              </button>
+            </SignInButton>
+          )}
+          {user.isSignedIn && (
+            <SignOutButton>
+              <button className="mt-10 cursor-pointer rounded-md border p-2 text-white hover:bg-white hover:text-[#2e026d]">
+                Sign Out
+              </button>
+            </SignOutButton>
+          )}
         </div>
         <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
       </main>
@@ -55,10 +69,19 @@ const Messages = () => {
       {messages?.map((message) => {
         return (
           <div
-            key={message.id}
-            className="rounded-lg p-3 odd:bg-slate-500 even:bg-slate-700"
+            key={message.message.id}
+            className="flex max-w-xl items-center gap-3 rounded-lg p-3 odd:bg-slate-500 even:bg-slate-700"
+            style={{ wordBreak: "break-word" }}
           >
-            <span>{message.message}</span>
+            <Image
+              src={message.user.profileImageUrl ?? ""}
+              alt="Profile Image"
+              className="h-12 w-12 rounded-full"
+              width={56}
+              height={56}
+              priority
+            />
+            <p>{message.message.text}</p>
           </div>
         );
       })}
@@ -72,6 +95,7 @@ const CreateMessageWizard = () => {
   const [input, setInput] = useState("");
 
   const ctx = api.useContext();
+  const clerk = useClerk();
 
   const { mutate, isLoading: isPosting } = api.message.create.useMutation({
     onSuccess: () => {
@@ -88,18 +112,18 @@ const CreateMessageWizard = () => {
     },
   });
 
-  if (!user) return null;
-
   return (
     <div className="flex gap-3 text-white">
-      <Image
-        src={user.profileImageUrl}
-        alt="Profile Image"
-        className="h-14 w-14 rounded-full"
-        width={56}
-        height={56}
-        priority
-      />
+      {user && (
+        <Image
+          src={user?.profileImageUrl}
+          alt="Profile Image"
+          className="h-14 w-14 rounded-full"
+          width={56}
+          height={56}
+          priority
+        />
+      )}
       <input
         placeholder="Add a new message!"
         className="grow rounded-md bg-black bg-opacity-30 p-3 outline-none"
@@ -118,7 +142,7 @@ const CreateMessageWizard = () => {
       />
       <button
         className="rounded-md border border-white p-3 hover:bg-white hover:text-[#2e026d] disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={() => mutate({ content: input })}
+        onClick={() => (user ? mutate({ content: input }) : clerk.openSignIn())}
         disabled={input == ""}
       >
         Add

@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { message } from "drizzle/schema";
+import { message, user } from "drizzle/schema";
 import { desc, eq } from "drizzle-orm";
 
 // import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
@@ -54,6 +54,7 @@ export const messageRouter = createTRPCRouter({
       const data = await ctx.dbPool
         .select()
         .from(message)
+        .innerJoin(user, eq(user.id, message.userId))
         .orderBy(desc(message.createdAt))
         .limit(input.n);
       return data;
@@ -73,7 +74,7 @@ export const messageRouter = createTRPCRouter({
 
       const insertResult = await ctx.dbPool
         .insert(message)
-        .values({ message: input.content, userId: userId });
+        .values({ text: input.content, userId: userId });
 
       const newMessageId = insertResult[0].insertId;
 
