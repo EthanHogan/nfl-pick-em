@@ -16,7 +16,7 @@ https://github.com/EthanHogan/UserPlatform.git
 
 - [Next.js (React Framework)](https://nextjs.org)
 - [Tailwind CSS](https://tailwindcss.com)
-- [Prisma (ORM)](https://prisma.io)
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [tRPC (TS-based framework for building typesafe APIs)](https://trpc.io)
 - [PlanetScale (Serverless MySQL DB)](https://planetscale.com)
 - [Clerk (Auth/User Management)](https://clerk.com)
@@ -24,7 +24,7 @@ https://github.com/EthanHogan/UserPlatform.git
 - [Axiom (Logging)](https://app.axiom.co)
 - [Upstash (Rate Limiter)](https://upstash.com)
 
-## Steps to setting up new project
+## Steps to setting up a new project
 
 - Run:
 
@@ -32,7 +32,7 @@ https://github.com/EthanHogan/UserPlatform.git
 npm install
 ```
 
-- `Next.js`, `Tailwind`, `Prisma`, `tRPC`: These are already set up with the project.
+- `Next.js`, `Tailwind`, `Drizzle`, `tRPC`: These are already set up with the project.
 - Ensure the project is in your GitHub.
 - **PlanetScale:**
   1. Sign in to [PlanetScale](https://planetscale.com).
@@ -40,10 +40,10 @@ npm install
   3. Select the region for your DB, ideally close to where your `Vercel` functions will be deployed.
   4. Name your DB (e.g., "userplatformdb").
   5. Click the `Connect` button.
-  6. Change the `Connect with:` value to "Prisma".
+  6. Change the `Connect with:` value to "Prisma" (at the time of writing this, "Drizzle" is not an option but this should still work with the "Prisma" option selected).
   7. Copy the `DATABASE_URL` environment variable and paste it into your project's `.env` file.
-  8. In your terminal, run `npx prisma db push` to set the database schema based on the current schema in the `schema.prisma` file.
-  9. Run `npx prisma studio` in your terminal to test that your DB is working. This should open a page where you can add a record to the `Example` table.
+  8. In your terminal, run `npm run dbpush` to set the database schema based on the current schema in the `drizzle/schema.ts` file.
+  9. Connect to the database using an IDE like MySQL Workbench to check that the schema has been updated.
 - **Clerk:**
   1. Navigate to [Clerk](https://dashboard.clerk.com) and sign in.
   2. Add an application (you may need to create a workspace first, e.g., "Personal").
@@ -51,6 +51,8 @@ npm install
   4. Select Identifiers, Auth strategy, and Social Connections as desired.
   5. Click `Create Application`.
   6. Navigate to `API Keys` on Clerk to get the `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`. Copy and paste both into your project's `.env` file.
+  7. If you want to require users to have a username, in the Clerk side bar under "User & Authentication", select "Email, Phone, Username" and toggle on `Username`.
+  - Note: some social connections will pass the username to the webhook without this toggled on, but for the ones that don't, when this is turned on, an additional popup will come up for the user, requiring them to enter a unique username. Or they made be required to enter a unique username if the username given by the social connection conflicts with an existing users username.
 - **Upstash:**
   1. Navigate to [Upstash](https://upstash.com) and sign in.
   2. Click `Console` button to get the console or go to console [here](https://console.upstash.com).
@@ -86,16 +88,10 @@ npm install
 npm run dev
 ```
 
-## Pushing schema changes to Database
+## Pushing Schema Changes to the Database
 
 ```sh
-npx prisma db push
-```
-
-## Opening Prisma Studio
-
-```sh
-npx prisma studio
+npm run dbpush
 ```
 
 ## Deployment
@@ -140,22 +136,23 @@ git push
   12. Create a new endpoint in Clerk ("Add Endpoint" on "Webhooks" page) with the same settings, except change the endpoint url to your production endpoint.
 
 ## Running MySQL DB locally using Docker
+
 - **Docker:**
   1. Spin up a container with an image that has mysql on it. If you run the command below, it will automatically install the latest version of the mysql image and startup a container.
-   - Swap the `user-platform-mysql` for whatever you want to call the container.
-   - Swap the `3333` for whatever port number you want to expose the container on.
-   - Swap `myPassword` with your password to the db.
-   ```sh
-   docker run --name user-platform-mysql -p 3333:3306 -e MYSQL_ROOT_PASSWORD=myPassword -d mysql
-   ```
+  - Swap the `user-platform-mysql` for whatever you want to call the container.
+  - Swap the `3333` for whatever port number you want to expose the container on.
+  - Swap `myPassword` with your password to the db.
+  ```sh
+  docker run --name user-platform-mysql -p 3333:3306 -e MYSQL_ROOT_PASSWORD=myPassword -d mysql
+  ```
 - **MySQL:**
   1. Use MySQL Workbench to create your database schema. Note the name. For this example, lets say we name the schema `UserPlatform`.
-- **Prisma:**
+- **Drizzle:**
   1. Update the `DATABASE_URL` line in the `.env` to the following format:
-   - `root` and `myPassword` are your DB credentials. You would have used them to connect to the DB in MySQL Workbench.
-   - Make sure the port number (`3333` in this example) matches the port number you exposed the Docker container on.
-   - The last thing after the slash is the name of the DB schema to connect to. `UserPlatform`, in this example.
+  - `root` and `myPassword` are your DB credentials. You would have used them to connect to the DB in MySQL Workbench.
+  - Make sure the port number (`3333` in this example) matches the port number you exposed the Docker container on.
+  - The last thing after the slash is the name of the DB schema to connect to. `UserPlatform`, in this example.
   ```sh
    DATABASE_URL='mysql://root:myPassword@localhost:3333/UserPlatform'
   ```
-
+  2. Update the other `DATABASE_...` variables with the DB info from the URL. Check `.env.example` for examples

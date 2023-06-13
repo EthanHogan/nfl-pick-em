@@ -5,14 +5,15 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dbpush": "drizzle-kit push:mysql",
+    "dbpull": "drizzle-kit introspect:mysql",
+    "dbgenerate": "drizzle-kit generate:mysql --config ./drizzle.config.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.16.4",
-    "@prisma/client": "^4.11.0",
     "@tanstack/react-query": "^4.28.0",
     "@trpc/client": "^10.18.0",
     "@trpc/next": "^10.18.0",
@@ -20,10 +21,14 @@
     "@trpc/server": "^10.18.0",
     "@upstash/ratelimit": "^0.4.2",
     "@upstash/redis": "^1.20.4",
+    "dotenv": "^16.1.4",
+    "drizzle-orm": "^0.26.5",
     "micro": "^10.0.1",
+    "mysql2": "^3.3.3",
     "next": "^13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.1",
     "superjson": "1.12.2",
     "svix": "^0.84.1",
     "zod": "^3.21.4"
@@ -37,12 +42,12 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "autoprefixer": "^10.4.14",
+    "drizzle-kit": "^0.18.1",
     "eslint": "^8.36.0",
     "eslint-config-next": "^13.2.4",
     "postcss": "^8.4.21",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
-    "prisma": "^4.11.0",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
   },

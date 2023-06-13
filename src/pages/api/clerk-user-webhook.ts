@@ -3,9 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { UserWebhookEvent, UserJSON } from "@clerk/clerk-sdk-node";
 import { Webhook } from "svix";
 import { buffer } from "micro";
-import { prisma } from "~/server/db";
+import { db, dbPool } from "drizzle/index";
 import { TRPCError } from "@trpc/server";
-import type { User } from "@prisma/client";
+import { user, message } from "drizzle/schema";
+import { type InferModel, eq } from "drizzle-orm";
+import { convertToSQLTimeFormat } from "~/utils/api";
 
 export const config = {
   api: {
@@ -20,6 +22,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("REQUEST RECEIVED");
   // Check if the request method is POST
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
@@ -69,15 +72,13 @@ async function handleUserCreated(event: UserWebhookEvent) {
   const canCreateUser = !(await userExists(data.id));
   if (!canCreateUser) throw new TRPCError({ code: "CONFLICT" });
 
-  await prisma.user.create({
-    data: {
-      id: data.id,
-      createdAt: new Date(data.created_at),
-      firstName: data.first_name,
-      lastName: data.last_name,
-      username: data.username,
-      profileImageUrl: data.profile_image_url,
-    },
+  await dbPool.insert(user).values({
+    id: data.id,
+    createdAt: convertToSQLTimeFormat(new Date(data.created_at)),
+    firstName: data.first_name,
+    lastName: data.last_name,
+    username: data.username,
+    profileImageUrl: data.profile_image_url,
   });
 }
 
@@ -85,20 +86,25 @@ async function handleUserUpdated(event: UserWebhookEvent) {
   console.log("User updated:", event);
   const data = event.data as UserJSON;
 
-  const canUpdate = await userExists(data.id);
+  let canUpdate = await userExists(data.id);
+  // put a short wait here because sometimes Clerk sends the "updated" event before the "created" event on initial user account creation.
+  // they usually send both back to back on user creation its just sometimes the order gets mixed up causing an unnecessary error.
+  if (!canUpdate) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    canUpdate = await userExists(data.id);
+  }
+
   if (!canUpdate) throw new TRPCError({ code: "NOT_FOUND" });
 
-  await prisma.user.update({
-    where: {
-      id: data.id,
-    },
-    data: {
+  await db
+    .update(user)
+    .set({
       firstName: data.first_name,
       lastName: data.last_name,
       username: data.username,
       profileImageUrl: data.profile_image_url,
-    },
-  });
+    })
+    .where(eq(user.id, data.id));
 }
 
 async function handleUserDeleted(event: UserWebhookEvent) {
@@ -107,19 +113,12 @@ async function handleUserDeleted(event: UserWebhookEvent) {
 
   const canDelete = await userExists(data.id);
   if (!canDelete) throw new TRPCError({ code: "NOT_FOUND" });
-
-  await prisma.user.delete({
-    where: {
-      id: data.id,
-    },
-  });
+  await dbPool.delete(message).where(eq(message.userId, data.id));
+  await dbPool.delete(user).where(eq(user.id, data.id));
 }
 
-async function userExists(id: User["id"]) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
-  return !!user;
+async function userExists(id: InferModel<typeof user>["id"]) {
+  const userWithId = await db.query.user.findFirst({ where: eq(user.id, id) });
+
+  return !!userWithId;
 }

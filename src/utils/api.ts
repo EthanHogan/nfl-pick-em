@@ -17,6 +17,10 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 };
 
+export const convertToSQLTimeFormat = (date: Date) => {
+  return date.toISOString().slice(0, 19).replace("T", " ");
+};
+
 /** A set of type-safe react-query hooks for your tRPC API. */
 export const api = createTRPCNext<AppRouter>({
   config() {
@@ -56,13 +60,13 @@ export const api = createTRPCNext<AppRouter>({
 /**
  * Inference helper for inputs.
  *
- * @example type HelloInput = RouterInputs['example']['hello']
+ * @example type HelloInput = RouterInputs['message']['hello']
  */
 export type RouterInputs = inferRouterInputs<AppRouter>;
 
 /**
  * Inference helper for outputs.
  *
- * @example type HelloOutput = RouterOutputs['example']['hello']
+ * @example type HelloOutput = RouterOutputs['message']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
