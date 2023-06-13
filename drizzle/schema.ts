@@ -17,7 +17,7 @@ export const message = mysqlTable(
     updatedAt: datetime("updatedAt", { mode: "string" }).default(
       sql`(CURRENT_TIMESTAMP)`
     ),
-    message: varchar("message", { length: 280 }),
+    text: varchar("text", { length: 280 }),
     userId: varchar("userId", { length: 256 }).references(() => user.id),
   },
   (table) => {
