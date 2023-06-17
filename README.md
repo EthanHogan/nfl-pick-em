@@ -1,4 +1,4 @@
-This project is used as a starting point for personal projects.
+This project is used as my starting point for most of my web application personal projects.
 
 ## Using this project as a starting point
 
