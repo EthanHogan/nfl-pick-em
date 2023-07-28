@@ -9,7 +9,7 @@ const server = z.object({
   DATABASE_URL: z.string().url(),
   DATABASE_HOST: z.string().min(1),
   DATABASE_PORT: z.string().min(1),
-  DATABASE_USER: z.string().min(1),
+  DATABASE_USERNAME: z.string().min(1),
   DATABASE_PASSWORD: z.string().min(1),
   DATABASE_SCHEMA: z.string().min(1),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(22),
@@ -43,7 +43,7 @@ const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_HOST: process.env.DATABASE_HOST,
   DATABASE_PORT: process.env.DATABASE_PORT,
-  DATABASE_USER: process.env.DATABASE_USER,
+  DATABASE_USERNAME: process.env.DATABASE_USERNAME,
   DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
   DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:

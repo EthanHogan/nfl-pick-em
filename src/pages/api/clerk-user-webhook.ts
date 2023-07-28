@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { UserWebhookEvent, UserJSON } from "@clerk/clerk-sdk-node";
 import { Webhook } from "svix";
 import { buffer } from "micro";
-import { db, dbPool } from "drizzle/index";
+import { db } from "drizzle/index";
 import { TRPCError } from "@trpc/server";
 import { user, message } from "drizzle/schema";
 import { type InferModel, eq } from "drizzle-orm";
@@ -72,7 +72,7 @@ async function handleUserCreated(event: UserWebhookEvent) {
   const canCreateUser = !(await userExists(data.id));
   if (!canCreateUser) throw new TRPCError({ code: "CONFLICT" });
 
-  await dbPool.insert(user).values({
+  await db.insert(user).values({
     id: data.id,
     createdAt: convertToSQLTimeFormat(new Date(data.created_at)),
     firstName: data.first_name,
@@ -113,8 +113,8 @@ async function handleUserDeleted(event: UserWebhookEvent) {
 
   const canDelete = await userExists(data.id);
   if (!canDelete) throw new TRPCError({ code: "NOT_FOUND" });
-  await dbPool.delete(message).where(eq(message.userId, data.id));
-  await dbPool.delete(user).where(eq(user.id, data.id));
+  await db.delete(message).where(eq(message.userId, data.id));
+  await db.delete(user).where(eq(user.id, data.id));
 }
 
 async function userExists(id: InferModel<typeof user>["id"]) {

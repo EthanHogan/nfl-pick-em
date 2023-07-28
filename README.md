@@ -43,7 +43,7 @@ npm install
   6. Change the `Connect with:` value to "Prisma" (at the time of writing this, "Drizzle" is not an option but this should still work with the "Prisma" option selected).
   7. Copy the `DATABASE_URL` environment variable and paste it into your project's `.env` file.
   8. In your terminal, run `npm run dbpush` to set the database schema based on the current schema in the `drizzle/schema.ts` file.
-  9. Connect to the database using an IDE like MySQL Workbench to check that the schema has been updated.
+  9. Run `npx drizzle-kit studio` in the terminal to view your database tables and data in the browser.
 - **Clerk:**
   1. Navigate to [Clerk](https://dashboard.clerk.com) and sign in.
   2. Add an application (you may need to create a workspace first, e.g., "Personal").

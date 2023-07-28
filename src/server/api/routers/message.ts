@@ -45,13 +45,13 @@ export const messageRouter = createTRPCRouter({
       };
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.dbPool.select().from(message);
+    const data = await ctx.db.select().from(message);
     return data;
   }),
   getRecentRecords: publicProcedure
     .input(z.object({ n: z.number() }))
     .query(async ({ ctx, input }) => {
-      const data = await ctx.dbPool
+      const data = await ctx.db
         .select()
         .from(message)
         .innerJoin(user, eq(user.id, message.userId))
@@ -72,11 +72,11 @@ export const messageRouter = createTRPCRouter({
 
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
-      const insertResult = await ctx.dbPool
+      const insertResult = await ctx.db
         .insert(message)
         .values({ text: input.content, userId: userId });
-
-      const newMessageId = insertResult[0].insertId;
+        
+      const newMessageId = parseInt(insertResult.insertId);
 
       const newMessage = await ctx.db.query.message.findFirst({
         where: eq(message.id, newMessageId),

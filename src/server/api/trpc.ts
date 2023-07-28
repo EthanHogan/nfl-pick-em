@@ -16,7 +16,7 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-import { db, dbPool } from "drizzle/index";
+import { db } from "drizzle/index";
 
 // type CreateContextOptions = Record<string, never>;
 
@@ -50,7 +50,6 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
 
   return {
     db,
-    dbPool,
     userId,
   };
 };
