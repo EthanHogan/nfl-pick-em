@@ -10,9 +10,11 @@ export const user = mysqlTable("user", {
     sql`(CURRENT_TIMESTAMP)`
   ),
   profileImageUrl: varchar("profileImageUrl", { length: 256 }),
+  deletedAt: datetime("deletedAt", { mode: "string" }),
 });
 
-export type User = InferModel<typeof user>;
+export type User = InferModel<typeof user, "select">;
+export type NewUser = InferModel<typeof user, "insert">;
 
 export const usersRelations = relations(user, ({ many }) => ({
   posts: many(message),
@@ -30,7 +32,8 @@ export const message = mysqlTable("message", {
   userId: varchar("userId", { length: 256 }),
 });
 
-export type Message = InferModel<typeof message>;
+export type Message = InferModel<typeof message, "select">;
+export type NewMessage = InferModel<typeof message, "insert">;
 
 export const messageRelations = relations(message, ({ one }) => ({
   author: one(user, {
