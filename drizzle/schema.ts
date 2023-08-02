@@ -1,11 +1,5 @@
-import {
-  mysqlTable,
-  index,
-  serial,
-  datetime,
-  varchar,
-} from "drizzle-orm/mysql-core";
-import { relations, sql } from "drizzle-orm";
+import { mysqlTable, serial, datetime, varchar } from "drizzle-orm/mysql-core";
+import { type InferModel, relations, sql } from "drizzle-orm";
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 256 }).primaryKey().notNull(),
@@ -18,29 +12,29 @@ export const user = mysqlTable("user", {
   profileImageUrl: varchar("profileImageUrl", { length: 256 }),
 });
 
+export type User = InferModel<typeof user>;
+
 export const usersRelations = relations(user, ({ many }) => ({
-	posts: many(message),
+  posts: many(message),
 }));
 
-export const message = mysqlTable(
-  "message",
-  {
-    id: serial("id").primaryKey().notNull(),
-    createdAt: datetime("createdAt", { mode: "string" }).default(
-      sql`(CURRENT_TIMESTAMP)`
-    ),
-    updatedAt: datetime("updatedAt", { mode: "string" }).default(
-      sql`(CURRENT_TIMESTAMP)`
-    ),
-    text: varchar("text", { length: 280 }),
-    userId: varchar("userId", { length: 256 }),
-  }
-);
+export const message = mysqlTable("message", {
+  id: serial("id").primaryKey().notNull(),
+  createdAt: datetime("createdAt", { mode: "string" }).default(
+    sql`(CURRENT_TIMESTAMP)`
+  ),
+  updatedAt: datetime("updatedAt", { mode: "string" }).default(
+    sql`(CURRENT_TIMESTAMP)`
+  ),
+  text: varchar("text", { length: 280 }),
+  userId: varchar("userId", { length: 256 }),
+});
+
+export type Message = InferModel<typeof message>;
 
 export const messageRelations = relations(message, ({ one }) => ({
-	author: one(user, {
-		fields: [message.userId],
-		references: [user.id],
-	}),
+  author: one(user, {
+    fields: [message.userId],
+    references: [user.id],
+  }),
 }));
-

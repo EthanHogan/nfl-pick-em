@@ -5,7 +5,7 @@ import { Webhook } from "svix";
 import { buffer } from "micro";
 import { db } from "drizzle/index";
 import { TRPCError } from "@trpc/server";
-import { user, message } from "drizzle/schema";
+import { user, message, User } from "drizzle/schema";
 import { type InferModel, eq } from "drizzle-orm";
 import { convertToSQLTimeFormat } from "~/utils/api";
 
@@ -117,7 +117,7 @@ async function handleUserDeleted(event: UserWebhookEvent) {
   await db.delete(user).where(eq(user.id, data.id));
 }
 
-async function userExists(id: InferModel<typeof user>["id"]) {
+async function userExists(id: User["id"]) {
   const userWithId = await db.query.user.findFirst({ where: eq(user.id, id) });
 
   return !!userWithId;
